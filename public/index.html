@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" value="bob@gmail.com" />
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <input type="text" id="password" name="'password" value="1234" />
+    </div>
+    <button id="btn-get-animals">Get animal</button>
+    <div id="result"></div>
+  </body>
+  <script>
+    const btn = document.getElementById("btn-get-animals");
+    const user = document.getElementById("username");
+    const psw = document.getElementById("password");
+    const resultDiv = document.getElementById("result");
+
+    btn.addEventListener("click", () => {
+      const headers = {
+        Authorization: btoa(`Basic ${user.value}:${psw.value}`),
+      };
+
+      console.log(headers);
+
+      fetch("api/animals", { method: "GET", headers: headers })
+        .then((res) => {
+          if (!res.ok) {
+            throw "response is not ok, " + res.statusText;
+          }
+
+          return res.json();
+        })
+        .then((body) => {
+          console.log(body);
+
+          // resultDiv.innerHTML = `<p>Name: ${body[0].name}</p>`;
+
+          resultDiv.innerHTML = body
+            .map((animal) => `<p>Name: ${animal.name}, ${animal.species}</p>`)
+            .join("");
+        })
+        .catch((err) => {
+          console.log("err:", err);
+        });
+    });
+  </script>
+</html>
